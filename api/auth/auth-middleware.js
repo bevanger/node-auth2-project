@@ -1,4 +1,3 @@
-const e = require('express');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require("../secrets"); // use this secret!
 const Users = require('../users/users-model');
@@ -61,6 +60,7 @@ const checkUsernameExists = (req, res, next) => {
       if(credentials.length < 1) {
         next({ message: 'Invalid credentials', status: 401})
       } else {
+        req.user = credentials[0]
         next()
       }
     })
@@ -80,8 +80,8 @@ const validateRoleName = (req, res, next) => {
   if(!role_name || role_name.trim() === '') {
     req.body.role_name = 'student';
     next()
-  } else if(role_name.name.trim() === 'admin'){
-      next({ message: 'Role cannot be admin', status: 422 })
+  } else if(role_name.trim() === 'admin'){
+      next({ message: 'Role can not be admin', status: 422 })
   } else if(role_name.trim().length > 32) {
       next({ message: 'Role name can not be longer than 32 chars', status: 422 })
   } else {
